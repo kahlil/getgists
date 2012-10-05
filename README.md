@@ -3,11 +3,6 @@
 A simple jQuery plugin to access the Gist repository of a Github user.
 
 ## Getting Started
-Download the [production version][min] or the [development version][max].
-
-[min]: https://raw.github.com/tim/gist/master/dist/gist.min.js
-[max]: https://raw.github.com/tim/gist/master/dist/gist.js
-
 In your web page:
 
 ```html
@@ -15,7 +10,10 @@ In your web page:
 <script src="dist/gist.min.js"></script>
 <script>
 jQuery(function($) {
-  $.awesome(); // "awesome"
+  $('.container').gist({
+    user: 'tvooo',
+    language: 'javascript'
+  });
 });
 </script>
 ```
