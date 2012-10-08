@@ -31,47 +31,47 @@
     }
   });
 
-  test("default settings", function() {
-    ok($.fn.getGists.defaults, "options set up correctly");
-    equal($.fn.getGists.defaults.count, 10, "default global options are set");
-    $.fn.getGists.defaults.user = "test";
-    equal($.fn.getGists.defaults.user, "test", "can change the defaults globally");
+  test('default settings', function() {
+    ok($.fn.getGists.defaults, 'options set up correctly');
+    equal($.fn.getGists.defaults.count, 10, 'default global options are set');
+    $.fn.getGists.defaults.user = 'test';
+    equal($.fn.getGists.defaults.user, 'test', 'can change the defaults globally');
 });
 
   test('chainable', 2, function() {
-    ok($("div.container").getGists().addClass("testing"), "can be chained");
-    equal($("div.container").hasClass("testing"), true, "class was added correctly from chaining");
+    ok($('div.container').getGists().addClass('testing'), 'can be chained');
+    equal($('div.container').hasClass('testing'), true, 'class was added correctly from chaining');
   });
 
   asyncTest('functionality: fetching', 2, function() {
-    $.getGists({
-      user: "tvooo",
+    $.fn.getGists({
+      user: 'tvooo',
       count: 1,
       success: function(data) {
-        equal(data.length, 1, "one gist returned");
+        equal(data.length, 1, 'one gist returned');
         start();
       }
     });
-    $.getGists({
-      user: "tvooo",
+    $.fn.getGists({
+      user: 'tvooo',
       count: 3,
       success: function(data) {
-        equal(data.length, 3, "three gists returned");
+        equal(data.length, 3, 'three gists returned');
         start();
       }
     });
   });
 
   asyncTest('functionality: embedding <div>', 3, function() {
-    $("div.container").getGists({
-      user: "tvooo",
+    $('div.container').getGists({
+      user: 'tvooo',
       count: 1,
-      outputClass: "test-gist",
+      outputClass: 'test-gist',
       success: function() {
         setTimeout(function() {
-          ok($("div.container div").length, "the <div> was created");
-          ok($("div.container div").hasClass('test-gist'), "the class was applied");
-          ok($("div.container div.test-gist div.gist").length, "the gist was embedded");
+          ok($('div.container div').length, 'the <div> was created');
+          ok($('div.container div').hasClass('test-gist'), 'the class was applied');
+          ok($('div.container div.test-gist div.gist').length, 'the gist was embedded');
           start();
         }, 1000);
       }
@@ -79,14 +79,14 @@
   });
 
   asyncTest('functionality: embedding <li>', 1, function() {
-    $("ul.container").getGists({
-      user: "tvooo",
+    $('ul.container').getGists({
+      user: 'tvooo',
       count: 2,
-      outputClass: "test-gist",
-      outputElem: "li",
+      outputClass: 'test-gist',
+      outputElem: 'li',
       success: function() {
         setTimeout(function() {
-          equal($("ul.container li.test-gist").length, 2, "two gists were embedded as list items");
+          equal($('ul.container li.test-gist').length, 2, 'two gists were embedded as list items');
           start();
         }, 1000);
       }

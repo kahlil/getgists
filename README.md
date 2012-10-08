@@ -26,7 +26,7 @@ jQuery(function($) {
 ### API
 GetGists provides a high-level method to directly embed Gists into your web page, as well as a low-level method that returns the gists as a JavaScript array, according to the Github Gist API.
 
-* `$.fn.GetGists( options )`
+* `$.fn.getGists( options )`
   Embed Gists into the selected element(s)
   * `options`: An object literal which defines the settings to use
     * `count`: Limits the amount of Gists to be embedded; defaults to `10`
@@ -92,5 +92,5 @@ This library uses QUnit for unit testing. AJAX responses are mocked using jQuery
 _(Nothing yet)_
 
 ## License
-Copyright (c) 2012 Tim von Oldenburg  
+Copyright (c) 2012 Tim von Oldenburg
 Licensed under the MIT license.
