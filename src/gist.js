@@ -30,7 +30,8 @@
     var script = document.querySelector('script[src="https://gist.github.com/' + id + '.js"]');
     var div = document.createElement('div');
     div.innerHTML = str;
-    script.parentNode.insertBefore(div, script.nextElementSibling);
+    script.parentNode.innerHTML = str;
+    //script.parentNode.insertBefore(div, script.nextElementSibling);
   };
 
   var insertGistCSS = function () {
@@ -41,7 +42,7 @@
 
   // Fetch list of Gists
   var fetchGists = function(opts, success) {
-    var path = '/gists/public';
+    var path = '';
     if(opts.user !== '') {
       path = '/users/' + opts.user + '/gists';
     }
@@ -155,7 +156,8 @@
     /* Defaults */
   $.fn.getGists.defaults = {
     count: 10,
-    user: 'bla'
+    //outputClass: '',
+    outputElem: 'div'
   };
 
 }(jQuery));

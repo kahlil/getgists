@@ -21,12 +21,18 @@
       notStrictEqual(actual, expected, [message])
       raises(block, [expected], [message])
   */
-/*
+
   module('jQuery#getGists', {
     setup: function() {
-      this.elems = $('#qunit-fixture').children();
+      //this.elems = $('#qunit-fixture').children();
+      $.mockjax({
+        // Matches /data/quote, /data/tweet etc.
+        url: 'https://api.github.com/users/*',
+        proxy: 'mock.json'
+      });
+
     }
-  });*/
+  });
 
   test("default settings", function() {
     ok($.fn.getGists.defaults, "options set up correctly");
