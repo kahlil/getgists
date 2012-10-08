@@ -22,15 +22,12 @@
       raises(block, [expected], [message])
   */
 
-  module('jQuery#getGists', {
+  module('jQuery GetGists', {
     setup: function() {
-      //this.elems = $('#qunit-fixture').children();
       $.mockjax({
-        // Matches /data/quote, /data/tweet etc.
         url: 'https://api.github.com/users/*',
         proxy: 'mock.json'
       });
-
     }
   });
 
@@ -65,16 +62,33 @@
     });
   });
 
-  asyncTest('functionality: embedding', 1, function() {
+  asyncTest('functionality: embedding <div>', 3, function() {
     $("div.container").getGists({
       user: "tvooo",
       count: 1,
+      outputClass: "test-gist",
       success: function() {
         setTimeout(function() {
-          ok($("div.container div").length, "the gist was embedded");
+          ok($("div.container div").length, "the <div> was created");
+          ok($("div.container div").hasClass('test-gist'), "the class was applied");
+          ok($("div.container div.test-gist div.gist").length, "the gist was embedded");
           start();
         }, 1000);
-        //start();
+      }
+    });
+  });
+
+  asyncTest('functionality: embedding <li>', 1, function() {
+    $("ul.container").getGists({
+      user: "tvooo",
+      count: 2,
+      outputClass: "test-gist",
+      outputElem: "li",
+      success: function() {
+        setTimeout(function() {
+          equal($("ul.container li.test-gist").length, 2, "two gists were embedded as list items");
+          start();
+        }, 1000);
       }
     });
   });

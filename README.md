@@ -24,18 +24,39 @@ jQuery(function($) {
 ## Documentation
 
 ### API
-GetGists provides a high-level method to directly embed Gists into your web page.
+GetGists provides a high-level method to directly embed Gists into your web page, as well as a low-level method that returns the gists as a JavaScript array, according to the Github Gist API.
+
+* `$.fn.GetGists( options )
+  Embed Gists into the selected element(s)
+  * `options`
+* `$.GetGists( options )
+  Receive a list of Gists as an array
+
+### Defaults
+The default values for both methods are as follows and can be overwritten.
+```javascript
+/* Defaults */
+
+$.fn.getGists.defaults = {
+  count: 10,
+  outputElem: 'div'
+};
+
+$.getGists.defaults = {
+  count: 10
+};
+```
 
 ## Examples
 
 * Embed a maximum of 5 JavaScript Gists as `<div>` elements:
-  ```javascript
-  $('.container').getGists({
-    user: 'tvooo',
-    language: 'javascript',
-    outputElem: 'li'
-  });
-  ```
+```javascript
+$('.container').getGists({
+user: 'tvooo',
+language: 'javascript',
+outputElem: 'li'
+});
+```
 
 * Print out a description list of all Gists:
 ```javascript

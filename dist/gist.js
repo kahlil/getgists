@@ -1,10 +1,8 @@
-/*! jQuery Gist Plugin - v0.1.0 - 2012-10-08
-* https://github.com/tim/gist
+/*! jQuery GetGists Plugin - v0.1.0 - 2012-10-08
+* https://github.com/tvooo/getgists
 * Copyright (c) 2012 Tim von Oldenburg; Licensed MIT */
 
 /*jslint evil: true */
-
-// https://api.github.com
 
 (function($) {
   "use strict";
@@ -56,13 +54,14 @@
   };
 
   // Fetch single Gist
-  var fetchGist = function(options) { };
+  var fetchGist = function(options) {
+    throw "Not yet implemented";
+  };
 
+  // Filter list of Gists according to language, a keyword, and max count
   var filter = function(list, options) {
-    var temp   = [],
-        result = [];
+    var temp   = [];
     for(var i = 0, len = list.length, el = list[0]; i < len; el = list[i], i++) {
-      
       // Filter by language
       if(options.language && typeof options.language === "string" && options.language.length > 0) {
         var add = false;
@@ -90,9 +89,10 @@
     return temp;
   };
 
-  // Static method
+  /* Plugin Methods */
+
+  // Static methods
   $.getGists = function(method) {
-    // Method calling logic
     if ( staticMethods[method] ) {
       return staticMethods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
     } else if ( typeof method === 'object' || ! method ) {
@@ -102,7 +102,7 @@
     }
   };
 
-  // Collection method
+  // Collection methods
   $.fn.getGists = function(method) {
     // Method calling logic
     if ( collectionMethods[method] ) {
@@ -114,12 +114,11 @@
     }
   };
 
+  /* Actual method implementations, not exposed to jQuery */
+
   var staticMethods = {
-    list: function( options ) {
-      var settings = $.extend( {
-        'user'    : '',
-        'count'   : 20
-      }, options);
+    list: function(opts) {
+      var settings = $.extend({}, $.getGists.defaults, opts);
       fetchGists(settings, function (data) {
         if(settings.success) {
             settings.success(data);
@@ -139,7 +138,14 @@
             var script = document.createElement( 'script' );
             script.type = 'text/javascript';
             script.src = 'https://gist.github.com/' + el.id + '.js';
-            this.appendChild(script);
+            var elem = (settings.outputElem === 'li') ? $('<li>') : $('<div>');
+            if(settings.outputClass) {
+              elem.addClass(settings.outputClass);
+            }
+            //console.log(elem.get(0));
+            elem.get(0).appendChild(script);
+            //console.log(this);
+            this.appendChild(elem.get(0));
           }, this));
           if(settings.success) {
             settings.success();
@@ -149,11 +155,15 @@
     }
   };
 
-    /* Defaults */
+  /* Defaults */
+  
   $.fn.getGists.defaults = {
     count: 10,
-    //outputClass: '',
     outputElem: 'div'
+  };
+
+  $.getGists.defaults = {
+    count: 10
   };
 
 }(jQuery));
