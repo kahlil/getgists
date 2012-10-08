@@ -7,7 +7,7 @@ In your web page:
 
 ```html
 <script src="jquery.js"></script>
-<script src="dist/jquery.getgists.min.js"></script>
+<script src="getgists.min.js"></script>
 <script>
 jQuery(function($) {
   $('.container').getGists({

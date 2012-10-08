@@ -142,9 +142,7 @@
             if(settings.outputClass) {
               elem.addClass(settings.outputClass);
             }
-            //console.log(elem.get(0));
             elem.get(0).appendChild(script);
-            //console.log(this);
             this.appendChild(elem.get(0));
           }, this));
           if(settings.success) {

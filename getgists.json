@@ -1,5 +1,5 @@
 {
-  "name": "gist",
+  "name": "getgists",
   "title": "jQuery GetGists Plugin",
   "description": "A simple jQuery plugin to access the Gist repository of a Github user.",
   "version": "0.1.0",
