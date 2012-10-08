@@ -29,16 +29,15 @@ GetGists provides a high-level method to directly embed Gists into your web page
 ## Examples
 
 * Embed a maximum of 5 JavaScript Gists as `<div>` elements:
-  
-```javascript
-$('.container').getGists({
-  user: 'tvooo',
-  language: 'javascript'
-});
-```
+  ```javascript
+  $('.container').getGists({
+    user: 'tvooo',
+    language: 'javascript',
+    outputElem: 'li'
+  });
+  ```
 
 * Print out a description list of all Gists:
-  
 ```javascript
 $.getGists({
   user: 'tvooo',
