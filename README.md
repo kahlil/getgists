@@ -32,12 +32,19 @@ GetGists provides a high-level method to directly embed Gists into your web page
     * `count`: Limits the amount of Gists to be embedded; defaults to `10`
     * `keyword`: Only embeds Gists that contain this string in their description _(optional)_
     * `language`: Only embeds Gists that contain at least one file of this programming language _(optional)_
-    * `outputElem`: The HTML element to wrap every class in; can be either `div` or `li`
+    * `outputElem`: The HTML element to wrap every class in; can be either `'div'` or `'li'`, defaults to `'div'`
     * `outputClass`: A class name, or multiple class names seperated by a space, that are given to the wrapper element _(optional)_
-    * `success`: A callback function that is called upon successful retrieval of the Gists _(optional)_
+    * `success`: `function ()`, a callback function that is called upon successful retrieval of the Gists _(optional)_
     * `user`: The user name of the Github user
 * `$.GetGists( options )`
   Receive a list of Gists as an array
+  * `options`: An object literal which defines the settings to use
+    * `count`: Limits the amount of Gists to be embedded; defaults to `10`
+    * `keyword`: Only retrieves Gists that contain this string in their description _(optional)_
+    * `language`: Only retrieves Gists that contain at least one file of this programming language _(optional)_
+    * `success`: `function ( data )`, a callback function that is called upon successful retrieval of the Gists;
+      * `data`: An array of Gist meta data, see the [Gists API](http://developer.github.com/v3/gists/) documentation
+    * `user`: The user name of the Github user
 
 ### Defaults
 The default values for both methods are as follows and can be overwritten.
