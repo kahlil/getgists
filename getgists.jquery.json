@@ -1,9 +1,9 @@
 {
   "name": "gist",
-  "title": "jQuery Gist Plugin",
+  "title": "jQuery GetGists Plugin",
   "description": "A simple jQuery plugin to access the Gist repository of a Github user.",
   "version": "0.1.0",
-  "homepage": "https://github.com/tim/gist",
+  "homepage": "https://github.com/tvooo/getgists",
   "author": {
     "name": "Tim von Oldenburg",
     "email": "tim@voldenburg.com",
@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/tim/gist.git"
+    "url": "git://github.com/tvooo/getgists.git"
   },
   "bugs": {
-    "url": "https://github.com/tim/gist/issues"
+    "url": "https://github.com/tvooo/getgists/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/tim/gist/blob/master/LICENSE-MIT"
+      "url": "https://github.com/tvooo/getgists/blob/master/LICENSE-MIT"
     }
   ],
   "dependencies": {
