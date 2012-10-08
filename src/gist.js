@@ -1,10 +1,12 @@
 /*
- * gist
- * https://github.com/tim/gist
+ * getgists
+ * https://github.com/tvooo/getgists
  *
  * Copyright (c) 2012 Tim von Oldenburg
  * Licensed under the MIT license.
  */
+
+/*jslint evil: true */
 
 // https://api.github.com
 
@@ -37,48 +39,18 @@
     }
   };
 
-  // Embed method.
-  $.fn.gist = function(settings) {
-    insertGistCSS();
-    return this.each(function() {
-      fetchGists(settings, $.proxy (function (list, container) {
-        list.forEach($.proxy(function (el) {
-          var script = document.createElement( 'script' );
-          script.type = 'text/javascript';
-          script.src = 'https://gist.github.com/' + el.id + '.js';
-          this.appendChild(script);
-        }, this));
-      }, this));
-    });
-  };
-
-
-
-// Embed code
-// <script src="https://gist.github.com/795257.js?file=README.txt"></script>
-
   // Fetch list of Gists
-  var fetchGists = function(options, success) {
+  var fetchGists = function(opts, success) {
     var path = '/gists/public';
-    if(options.user !== '') {
-      path = '/users/' + options.user + '/gists';
+    if(opts.user !== '') {
+      path = '/users/' + opts.user + '/gists';
     }
-    // nur ein gist?
-    /*if(options.number) {
-      path = '/gists/' + options.number;
-    }*/
     $.ajax({
       method: 'get',
       dataType: 'json',
-      /*headers: {
-        //'Access-Control-Request-Headers': 'Origin, Host',
-        'Origin': 'http://localhost',
-        'Host': 'http://localhost'
-        //'Cache-Control': 'max-age=20'
-      },*/
       url: 'https://api.github.com' + path,
       success: function (data, textStatus, jqXHR) {
-        success(filter(data, options));
+        success(filter(data, opts));
       },
       error: function (jqXHR, textStatus, errorThrown) {
         return errorThrown;
@@ -87,9 +59,7 @@
   };
 
   // Fetch single Gist
-  var fetchGist = function(options) {
-
-  };
+  var fetchGist = function(options) { };
 
   var filter = function(list, options) {
     var temp   = [],
@@ -124,7 +94,7 @@
   };
 
   // Static method
-  $.gist = function(method) {
+  $.getGists = function(method) {
     // Method calling logic
     if ( staticMethods[method] ) {
       return staticMethods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
@@ -136,7 +106,7 @@
   };
 
   // Collection method
-  $.fn.gist = function(method) {
+  $.fn.getGists = function(method) {
     // Method calling logic
     if ( collectionMethods[method] ) {
       return collectionMethods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
@@ -152,42 +122,19 @@
       var settings = $.extend( {
         'user'    : '',
         'count'   : 20
-        //'keyword' : '',
-        //'language': ''
       }, options);
-      fetchGists(settings);
-      return $;
-    },
-    embed: function( options ) {
-      var settings = $.extend( {
-        'gist' : ''
-      }, options);
-      // gist? file?
-      if(settings.gist !== '') {
-        if(typeof settings.gist === "string") {
-          var n = parseInt(settings.gist, 10);
-          if(isNaN(n)) {
-            // Assume it is URL
-            //fetchGists($.extend({number:}));
-          } else {
-            // Assume it is gist number (string)
+      fetchGists(settings, function (data) {
+        if(settings.success) {
+            settings.success(data);
           }
-        } else if(typeof settings.gist === "number") {
-          // Assume it is gist number (object)
-
-        } else {
-          // Assume it is gist object
-        }
-      }
-      fetchGists(settings);
-      return 'awesome';
+      });
+      return $;
     }
   };
 
   var collectionMethods = {
-    embed: function (options) {
-      var settings = $.extend( {
-      }, options);
+    embed: function (opts) {
+      var settings = $.extend( {}, $.fn.getGists.defaults, opts);
       insertGistCSS();
       return this.each(function() {
         fetchGists(settings, $.proxy (function (list, container) {
@@ -197,9 +144,18 @@
             script.src = 'https://gist.github.com/' + el.id + '.js';
             this.appendChild(script);
           }, this));
+          if(settings.success) {
+            settings.success();
+          }
         }, this));
       });
     }
+  };
+
+    /* Defaults */
+  $.fn.getGists.defaults = {
+    count: 10,
+    user: 'bla'
   };
 
 }(jQuery));

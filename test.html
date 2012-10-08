@@ -5,15 +5,16 @@
     <script src="src/gist.js"></script>
 </head>
 <body>
+    <div class="container">
     <script>
 $(function() {
-    var result = $.gist({
-        user: 'kahlil',
-        success: function (data) {
-            console.log(data);
+    $('.container').getGists({
+        user: 'tvooo',
+        count: 1,
+        done: function() {
+            alert("done");
         }
-    });
-    console.log(result);
+    })
 });
     </script>
 </body>

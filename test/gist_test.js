@@ -21,37 +21,56 @@
       notStrictEqual(actual, expected, [message])
       raises(block, [expected], [message])
   */
-
-  module('jQuery#awesome', {
+/*
+  module('jQuery#getGists', {
     setup: function() {
       this.elems = $('#qunit-fixture').children();
     }
+  });*/
+
+  test("default settings", function() {
+    ok($.fn.getGists.defaults, "options set up correctly");
+    equal($.fn.getGists.defaults.count, 10, "default global options are set");
+    $.fn.getGists.defaults.user = "test";
+    equal($.fn.getGists.defaults.user, "test", "can change the defaults globally");
+});
+
+  test('chainable', 2, function() {
+    ok($("div.container").getGists().addClass("testing"), "can be chained");
+    equal($("div.container").hasClass("testing"), true, "class was added correctly from chaining");
   });
 
-  test('is chainable', 1, function() {
-    // Not a bad test to run on collection methods.
-    strictEqual(this.elems.awesome(), this.elems, 'should be chaninable');
+  asyncTest('functionality: fetching', 2, function() {
+    $.getGists({
+      user: "tvooo",
+      count: 1,
+      success: function(data) {
+        equal(data.length, 1, "one gist returned");
+        start();
+      }
+    });
+    $.getGists({
+      user: "tvooo",
+      count: 3,
+      success: function(data) {
+        equal(data.length, 3, "three gists returned");
+        start();
+      }
+    });
   });
 
-  test('is awesome', 1, function() {
-    strictEqual(this.elems.awesome().text(), 'awesomeawesomeawesome', 'should be thoroughly awesome');
-  });
-
-  module('jQuery.awesome');
-
-  test('is awesome', 1, function() {
-    strictEqual($.awesome(), 'awesome', 'should be thoroughly awesome');
-  });
-
-  module(':awesome selector', {
-    setup: function() {
-      this.elems = $('#qunit-fixture').children();
-    }
-  });
-
-  test('is awesome', 1, function() {
-    // Use deepEqual & .get() when comparing jQuery objects.
-    deepEqual(this.elems.filter(':awesome').get(), this.elems.last().get(), 'knows awesome when it sees it');
+  asyncTest('functionality: embedding', 1, function() {
+    $("div.container").getGists({
+      user: "tvooo",
+      count: 1,
+      success: function() {
+        setTimeout(function() {
+          ok($("div.container div").length, "the gist was embedded");
+          start();
+        }, 1000);
+        //start();
+      }
+    });
   });
 
 }(jQuery));
