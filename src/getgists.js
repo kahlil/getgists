@@ -7,12 +7,7 @@
 (function( $, window, document, undefined ) {
     'use strict';
 
-    /* Defaults */
-    var pluginName = 'getGists',
-        defaults   = {
-            count: 10,
-            outputElem: 'div'
-        };
+    var pluginName = 'getGists';
 
     /* Helper functions */
 
@@ -35,9 +30,9 @@
 
     function Plugin( element, options ) {
         this.element = element;
-        this.options = $.extend( {}, defaults, options );
+        this.options = $.extend( {}, $.fn[pluginName].defaults, options );
 
-        this._defaults = defaults;
+        this._defaults = $.fn[pluginName].defaults;
         this._name = pluginName;
     }
 
@@ -142,8 +137,15 @@
             });
         } else {
             /* Not executed on a jQuery object */
-            Plugin.prototype.list( options );
+            Plugin.prototype.list( $.extend( {}, $.fn[pluginName].defaults, options ) );
         }
+    };
+
+    /* Defaults */
+    $.fn[pluginName].defaults = {
+        count: 10,
+        outputElem: 'div',
+        success: function() {}
     };
 
 }( jQuery, window, document ));
