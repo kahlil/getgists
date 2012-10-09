@@ -4,7 +4,7 @@
 
 /*jslint evil: true */
 
-( function( $ ) {
+(function( $ ) {
     'use strict';
 
     /* Helper functions */
@@ -14,7 +14,7 @@
     // Overwrite document.write
     document._write = document.write;
     document.write = function( str ){
-        if ( str.indexOf('<div id=\"gist-') !== 0 ) {
+        if ( str.indexOf( '<div id=\"gist-' ) !== 0 ) {
                 if( str.indexOf('https://gist.github.com/stylesheets/gist/embed.css') === -1 ) {
                         // if you got this far it's not a github document.write call
                         document._write(str);
@@ -29,7 +29,7 @@
     };
 
     var insertGistCSS = function() {
-        if ( $('link[href="https://gist.github.com/stylesheets/gist/embed.css"]').length === 0 ) {
+        if ( !$('link[href="https://gist.github.com/stylesheets/gist/embed.css"]').length ) {
             $('<link>').attr( {
                 rel: 'stylesheet',
                 href: 'https://gist.github.com/stylesheets/gist/embed.css'
@@ -40,8 +40,10 @@
     // Fetch list of Gists
     var fetchGists = function( opts, success ) {
         var path = '';
-        if ( opts.user !== '' ) {
+        if ( opts.user ) {
             path = '/users/' + opts.user + '/gists';
+        } else {
+            $.error('No user name provided.');
         }
         $.ajax({
             method: 'get',
@@ -63,19 +65,19 @@
         $.error( 'Not yet implemented' );
     };
 
-    var filter = function( el, opts ) {
-        if ( opts.language !== undefined && typeof opts.language === 'string' && opts.language.length > 0) {
+    var filter = function( element, opts ) {
+        if ( opts.language !== undefined && typeof opts.language === 'string' && opts.language.length ) {
             var add = false;
-            for ( var f in el.files ) {
-                if ( el.files[ f ].language && el.files[ f ].language.toLowerCase() === opts.language.toLowerCase() ) {
+            for ( var file in element.files ) {
+                if ( element.files[ file ].language && element.files[ file ].language.toLowerCase() === opts.language.toLowerCase() ) {
                     add = true;
                 }
             }
             if ( !add ) { return false; }
         }
         // Filter by keyword in description (most simple)
-        if ( opts.keyword !== undefined && typeof opts.keyword === 'string' && opts.keyword.length > 0 ) {
-            if ( el.description.toLowerCase().indexOf( opts.keyword.toLowerCase() ) === -1 ) {
+        if ( opts.keyword !== undefined && typeof opts.keyword === 'string' && opts.keyword.length ) {
+            if ( element.description.toLowerCase().indexOf( opts.keyword.toLowerCase() ) === -1 ) {
                 return false;
             }
         }
@@ -108,10 +110,10 @@
 
     var staticMethods = {
         list: function( opts ) {
-            var settings = $.extend({}, $.fn.getGists.defaults, opts);
+            var settings = $.extend( {}, $.fn.getGists.defaults, opts );
             fetchGists(settings, function( data ) {
-                if(settings.success) {
-                        settings.success(data);
+                if ( settings.success ) {
+                        settings.success( data );
                     } else {
                         $.error( '$.getGists( options ) requires a "success" callback' );
                     }
@@ -121,21 +123,21 @@
     };
 
     var collectionMethods = {
-        embed: function (opts) {
-            var settings = $.extend( {}, $.fn.getGists.defaults, opts);
+        embed: function( opts ) {
+            var settings = $.extend( {}, $.fn.getGists.defaults, opts );
             insertGistCSS();
             return this.each(function() {
                 fetchGists(settings, $.proxy (function (list, container) {
-                    list.forEach($.proxy(function (el) {
+                    list.forEach( $.proxy(function (el) {
                         var script = document.createElement( 'script' );
                         script.type = 'text/javascript';
                         script.src = 'https://gist.github.com/' + el.id + '.js';
                         var elem = (settings.outputElem === 'li') ? $('<li>') : $('<div>');
-                        if(settings.outputClass) {
-                            elem.addClass(settings.outputClass);
+                        if ( settings.outputClass ) {
+                            elem.addClass( settings.outputClass );
                         }
-                        elem.get(0).appendChild(script);
-                        this.appendChild(elem.get(0));
+                        elem.get( 0 ).appendChild( script );
+                        this.appendChild( elem.get( 0 ) );
                     }, this));
                     if(settings.success) {
                         settings.success();
@@ -152,4 +154,4 @@
         outputElem: 'div'
     };
 
-}(jQuery));
+}( jQuery ));

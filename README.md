@@ -24,26 +24,20 @@ jQuery(function($) {
 ## Documentation
 
 ### API
-GetGists provides a high-level method to directly embed Gists into your web page, as well as a low-level method that returns the gists as a JavaScript array, according to the Github Gist API.
+GetGists provides a high-level method to directly embed Gists into your web page, as well as a low-level method that returns the gists as a JavaScript array, according to the [Github Gist API](http://developer.github.com/v3/gists/).
 
 * `$.fn.getGists( options )`
-  Embed Gists into the selected element(s)
+  Receives a list of Gists by a Github user and embeds them into the page.
+  If called on a collection of jQuery objects (e.g. `$('.container').getGists()`)
+  If called from the prototype (e.g. `$.fn.getGists()`), the Gists are only received and can be further processed by the `success` callback.
   * `options`: An object literal which defines the settings to use
     * `count`: Limits the amount of Gists to be embedded; defaults to `10`
     * `keyword`: Only embeds Gists that contain this string in their description _(optional)_
     * `language`: Only embeds Gists that contain at least one file of this programming language _(optional)_
     * `outputElem`: The HTML element to wrap every class in; can be either `'div'` or `'li'`, defaults to `'div'`
     * `outputClass`: A class name, or multiple class names seperated by a space, that are given to the wrapper element _(optional)_
-    * `success`: `function ()`, a callback function that is called upon successful retrieval of the Gists _(optional)_
-    * `user`: The user name of the Github user
-* `$.GetGists( options )`
-  Receive a list of Gists as an array
-  * `options`: An object literal which defines the settings to use
-    * `count`: Limits the amount of Gists to be embedded; defaults to `10`
-    * `keyword`: Only retrieves Gists that contain this string in their description _(optional)_
-    * `language`: Only retrieves Gists that contain at least one file of this programming language _(optional)_
-    * `success`: `function ( data )`, a callback function that is called upon successful retrieval of the Gists;
-      * `data`: An array of Gist meta data, see the [Gists API](http://developer.github.com/v3/gists/) documentation
+    * `success`: `function ( data )`, a callback function that is called upon successful retrieval of the Gists _(optional)_
+      * `data`: An array of Gist meta data for further processing
     * `user`: The user name of the Github user
 
 ### Defaults
@@ -54,10 +48,6 @@ The default values for both methods are as follows and can be overwritten.
 $.fn.getGists.defaults = {
   count: 10,
   outputElem: 'div'
-};
-
-$.getGists.defaults = {
-  count: 10
 };
 ```
 
@@ -74,7 +64,7 @@ outputElem: 'li'
 
 * Print out a description list of all Gists:
 ```javascript
-$.getGists({
+$.fn.getGists({
   user: 'tvooo',
   success: function (data) {
     data.forEach(function (item) {
