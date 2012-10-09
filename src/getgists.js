@@ -4,14 +4,19 @@
 
 /*jslint evil: true */
 
-(function( $ ) {
+(function( $, window, document, undefined ) {
     'use strict';
+
+    /* Defaults */
+    var pluginName = 'getGists',
+        defaults   = {
+            count: 10,
+            outputElem: 'div'
+        };
 
     /* Helper functions */
 
-    var console = window.console;
-
-    // Overwrite document.write
+    /* Wrap document.write for including Gists via <script> */
     document._write = document.write;
     document.write = function( str ){
         if ( str.indexOf( '<div id=\"gist-' ) !== 0 ) {
@@ -28,130 +33,117 @@
         script.parentNode.innerHTML = str;
     };
 
-    var insertGistCSS = function() {
-        if ( !$('link[href="https://gist.github.com/stylesheets/gist/embed.css"]').length ) {
-            $('<link>').attr( {
-                rel: 'stylesheet',
-                href: 'https://gist.github.com/stylesheets/gist/embed.css'
-            } ).appendTo( $('head') );
-        }
-    };
+    function Plugin( element, options ) {
+        this.element = element;
+        this.options = $.extend( {}, defaults, options );
 
-    // Fetch list of Gists
-    var fetchGists = function( opts, success ) {
-        var path = '';
-        if ( opts.user ) {
-            path = '/users/' + opts.user + '/gists';
-        } else {
-            $.error('No user name provided.');
-        }
-        $.ajax({
-            method: 'get',
-            dataType: 'json',
-            url: 'https://api.github.com' + path,
-            success: function( data, textStatus, jqXHR ) {
-                success( $.grep(data, function( elementOfArray, indexInArray ) {
-                    return filter( elementOfArray, opts );
-                }).slice(0, opts.count) );
-            },
-            error: function( jqXHR, textStatus, errorThrown ) {
-                return errorThrown;
+        this._defaults = defaults;
+        this._name = pluginName;
+    }
+
+    Plugin.prototype = {
+
+        insertGistCSS: function() {
+            if ( !$('link[href="https://gist.github.com/stylesheets/gist/embed.css"]').length ) {
+                $('<link>').attr( {
+                    rel: 'stylesheet',
+                    href: 'https://gist.github.com/stylesheets/gist/embed.css'
+                } ).appendTo( $('head') );
             }
-        });
-    };
+        },
 
-    // Fetch single Gist
-    var fetchGist = function( options ) {
-        $.error( 'Not yet implemented' );
-    };
+        fetchGists: function( options, success ) {
+            var path = '';
+            if ( options.user ) {
+                path = '/users/' + options.user + '/gists';
+            } else {
+                $.error('No user name provided.');
+            }
+            $.ajax({
+                method: 'get',
+                dataType: 'json',
+                url: 'https://api.github.com' + path,
+                success: $.proxy(function( data, textStatus, jqXHR ) {
+                    var filteredData =
+                        $.grep(data, $.proxy(function( elementOfArray, indexInArray ) {
+                            return this.filter( options, elementOfArray );
+                        }, this ));
+                    var slicedData = filteredData.slice(0, options.count);
+                    success( slicedData );
+                }, this ),
+                error: function( jqXHR, textStatus, errorThrown ) {
+                    return errorThrown;
+                }
+            });
+        },
 
-    var filter = function( element, opts ) {
-        if ( opts.language !== undefined && typeof opts.language === 'string' && opts.language.length ) {
-            var add = false;
-            for ( var file in element.files ) {
-                if ( element.files[ file ].language && element.files[ file ].language.toLowerCase() === opts.language.toLowerCase() ) {
-                    add = true;
+        fetchGist: function() {
+            $.error( 'Not yet implemented' );
+        },
+
+        filter: function( options, element ) {
+            if ( options.language !== undefined && typeof options.language === 'string' && options.language.length ) {
+                var add = false;
+                for ( var file in element.files ) {
+                    if ( element.files[ file ].language && element.files[ file ].language.toLowerCase() === options.language.toLowerCase() ) {
+                        add = true;
+                    }
+                }
+                if ( !add ) { return false; }
+            }
+            // Filter by keyword in description (most simple)
+            if ( options.keyword !== undefined && typeof options.keyword === 'string' && options.keyword.length ) {
+                if ( element.description.toLowerCase().indexOf( options.keyword.toLowerCase() ) === -1 ) {
+                    return false;
                 }
             }
-            if ( !add ) { return false; }
-        }
-        // Filter by keyword in description (most simple)
-        if ( opts.keyword !== undefined && typeof opts.keyword === 'string' && opts.keyword.length ) {
-            if ( element.description.toLowerCase().indexOf( opts.keyword.toLowerCase() ) === -1 ) {
-                return false;
-            }
-        }
-        return true;
-    };
+            return true;
+        },
 
-    /* Plugin Methods */
-
-    $.fn.getGists = function( method ) {
-        if ( this instanceof $ ) {
-            if ( collectionMethods[ method ] ) {
-                return collectionMethods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ) );
-            } else if ( typeof method === 'object' || ! method ) {
-                return collectionMethods.embed.apply( this, arguments );
-            } else {
-                $.error( 'Method ' +  method + ' does not exist on jQuery.fn.getGists' );
-            }
-        } else {
-            if ( staticMethods[ method ] ) {
-                return staticMethods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ) );
-            } else if ( typeof method === 'object' || ! method ) {
-                return staticMethods.list.apply( this, arguments );
-            } else {
-                $.error( 'Method ' +  method + ' does not exist on jQuery.fn.getGists' );
-            }
-        }
-    };
-
-    /* Actual method implementations, not exposed to jQuery */
-
-    var staticMethods = {
-        list: function( opts ) {
-            var settings = $.extend( {}, $.fn.getGists.defaults, opts );
-            fetchGists(settings, function( data ) {
-                if ( settings.success ) {
-                        settings.success( data );
-                    } else {
-                        $.error( '$.getGists( options ) requires a "success" callback' );
-                    }
-            });
+        list: function( options ) {
+            this.fetchGists( options, $.proxy( function( data ) {
+                if ( options.success ) {
+                    options.success( data );
+                }
+            }, this));
             return $;
-        }
-    };
+        },
 
-    var collectionMethods = {
-        embed: function( opts ) {
-            var settings = $.extend( {}, $.fn.getGists.defaults, opts );
-            insertGistCSS();
-            return this.each(function() {
-                fetchGists(settings, $.proxy (function (list, container) {
-                    list.forEach( $.proxy(function (el) {
-                        var script = document.createElement( 'script' );
-                        script.type = 'text/javascript';
-                        script.src = 'https://gist.github.com/' + el.id + '.js';
-                        var elem = (settings.outputElem === 'li') ? $('<li>') : $('<div>');
-                        if ( settings.outputClass ) {
-                            elem.addClass( settings.outputClass );
-                        }
-                        elem.get( 0 ).appendChild( script );
-                        this.appendChild( elem.get( 0 ) );
-                    }, this));
-                    if(settings.success) {
-                        settings.success();
+        embed: function( ) {
+            this.insertGistCSS();
+            this.fetchGists( this.options, $.proxy( function (list ) {
+                list.forEach( $.proxy( function (el) {
+                    var script = document.createElement( 'script' );
+                    script.type = 'text/javascript';
+                    script.src = 'https://gist.github.com/' + el.id + '.js';
+                    var elem = (this.options.outputElem === 'li') ? $('<li>') : $('<div>');
+                    if ( this.options.outputClass ) {
+                        elem.addClass( this.options.outputClass );
                     }
+                    elem.get( 0 ).appendChild( script );
+                    this.element.appendChild( elem.get( 0 ) );
                 }, this));
-            });
+                if(this.options.success) {
+                    this.options.success();
+                }
+            }, this));
+            return this;
         }
     };
 
-    /* Defaults */
-
-    $.fn.getGists.defaults = {
-        count: 10,
-        outputElem: 'div'
+    $.fn[pluginName] = function ( options ) {
+        if ( this instanceof $ ) {
+            /* Executed on a jQuery object */
+            return this.each(function () {
+                if (!$.data(this, 'plugin_' + pluginName)) {
+                    $.data(this, 'plugin_' + pluginName,
+                    (new Plugin( this, options )).embed());
+                }
+            });
+        } else {
+            /* Not executed on a jQuery object */
+            Plugin.prototype.list( options );
+        }
     };
 
-}( jQuery ));
+}( jQuery, window, document ));

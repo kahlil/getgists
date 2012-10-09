@@ -31,15 +31,8 @@
         }
     });
 
-    test( 'default settings', function() {
-        ok( $.fn.getGists.defaults, 'options set up correctly' );
-        equal( $.fn.getGists.defaults.count, 10, 'default global options are set' );
-        $.fn.getGists.defaults.user = 'test';
-        equal( $.fn.getGists.defaults.user, 'test', 'can change the defaults globally' );
-    });
-
     test( 'chainable', 2, function() {
-        ok( $('div.container').getGists().addClass('testing'), 'can be chained' );
+        ok( $('div.container').getGists({user: 'tvooo'}).addClass('testing'), 'can be chained' );
         equal( $('div.container').hasClass('testing'), true, 'class was added correctly from chaining' );
     });
 
