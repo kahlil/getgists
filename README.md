@@ -28,8 +28,10 @@ GetGists provides a high-level method to directly embed Gists into your web page
 
 * `$.fn.getGists( options )`
   Receives a list of Gists by a Github user and embeds them into the page.
-  If called on a collection of jQuery objects (e.g. `$('.container').getGists()`)
-  If called from the prototype (e.g. `$.fn.getGists()`), the Gists are only received and can be further processed by the `success` callback.
+
+  If called on a jQuery object (e.g. `$('.container').getGists()`), Gists are received and embedded into each of the selected elements.
+
+  If called on the prototype (e.g. `$.fn.getGists()`), the Gists are only received and can be further processed by the `success` callback.
   * `options`: An object literal which defines the settings to use
     * `count`: Limits the amount of Gists to be embedded; defaults to `10`
     * `keyword`: Only embeds Gists that contain this string in their description _(optional)_
